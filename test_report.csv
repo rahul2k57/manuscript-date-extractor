@@ -1,0 +1,88 @@
+checks,input,expected,actual,result
+"ambiguity: both fit, day-first",Received: 03/04/2026 ; Revised: 15 April 2026 ; Accepted: 20 June 2026,2026-04-03,2026-04-03,pass
+ambiguity: chronology resolves to month-first,Received: 03/04/2026 ; Revised: 12 March 2026 ; Accepted: 28 March 2026,2026-03-04,2026-03-04,pass
+ambiguity: day above 12 is day-first,Received: 13/04/2023,2023-04-13,2023-04-13,pass
+ambiguity: second number above 12 is month-first,Received: 04/13/2023,2023-04-13,2023-04-13,pass
+ambiguity: same day and month,Received: 03/03/2026,2026-03-03,2026-03-03,pass
+ambiguity: no clue defaults to day-first,Received: 03/04/2026,2026-04-03,2026-04-03,pass
+ambiguity: unresolved date is flagged for review,Received: 03/04/2026; Revised: 05/06/2026; Accepted: 07/08/2026,note contains NEEDS REVIEW,note contains NEEDS REVIEW,pass
+file: corrupt docx,bad.docx (not a zip),"bad.docx,Invalid","bad.docx,Invalid",pass
+file: empty document,(no text),Invalid,Invalid,pass
+file: zip without word/document.xml,odd.docx,"odd.docx,Invalid","odd.docx,Invalid",pass
+cli: no arguments exits with 2,./run.sh,2,2,pass
+cli: exit code 0,./run.sh in out.csv,0,0,pass
+"cli: header, one row per .docx, sorted, ignores other files","a.docx, b_corrupt.docx, c.DOCX, ~$lock.docx, notes.txt","file,received_date / a.docx,2023-03-12 / b_corrupt.docx,Invalid / c.DOCX,Invalid","file,received_date / a.docx,2023-03-12 / b_corrupt.docx,Invalid / c.DOCX,Invalid",pass
+cli: empty folder gives header only,(no files),"file,received_date","file,received_date",pass
+cli: missing input folder exits with 1,./run.sh nope out.csv,1,1,pass
+format: 2 Jan 2026,Received: 2 Jan 2026,2026-01-02,2026-01-02,pass
+format: 2 January 2026,Received: 2 January 2026,2026-01-02,2026-01-02,pass
+format: 04 Mar 2026,Received: 04 Mar 2026,2026-03-04,2026-03-04,pass
+format: ordinal 2nd January 2026,Received: 2nd January 2026,2026-01-02,2026-01-02,pass
+format: month first with comma,"Received: January 2, 2026",2026-01-02,2026-01-02,pass
+format: dashes 12-Mar-2023,Received: 12-Mar-2023,2023-03-12,2023-03-12,pass
+format: ISO,Received: 2026-01-02,2026-01-02,2026-01-02,pass
+format: ISO with slashes,Received: 2023/03/12,2023-03-12,2023-03-12,pass
+format: dotted 21.12.2026,Received: 21.12.2026,2026-12-21,2026-12-21,pass
+format: compact 20230312,Received: 20230312,2023-03-12,2023-03-12,pass
+format: Sept. with dot,Received: 4th Sept. 2026,2026-09-04,2026-09-04,pass
+format: Sep. 15,"Received: Sep. 15, 2026",2026-09-15,2026-09-15,pass
+format: two-digit year,Received: 12/05/26,2026-05-12,2026-05-12,pass
+format: extra spaces,Received:    2   Jan   2026,2026-01-02,2026-01-02,pass
+format: leap day valid,Received: 29 Feb 2024,2024-02-29,2024-02-29,pass
+invalid: future year on Accepted does not affect Received,Received: 12/05/26; Revised: Mar 2026; Accepted: 10 Apr 2031,2026-05-12,2026-05-12,pass
+invalid: impossible 31/04/2026,Received: 31/04/2026,Invalid,Invalid,pass
+invalid: 31 February 2023,Received: 31 February 2023,Invalid,Invalid,pass
+invalid: 29 Feb non-leap year,Received: 29 February 2026,Invalid,Invalid,pass
+invalid: month 13 ISO,Received: 2026-13-02,Invalid,Invalid,pass
+invalid: partial Mar 2026,Received: Mar 2026,Invalid,Invalid,pass
+invalid: label without date,Received:,Invalid,Invalid,pass
+invalid: no received at all,Revised: 4 Mar 2026; Accepted: 10 Apr 2026,Invalid,Invalid,pass
+label: colon,Received: 12 March 2023,2023-03-12,2023-03-12,pass
+label: no colon,Received 12 March 2023,2023-03-12,2023-03-12,pass
+label: Date received,Date received: 12 March 2023,2023-03-12,2023-03-12,pass
+label: Manuscript received,"Manuscript received March 12, 2023",2023-03-12,2023-03-12,pass
+label: 'on',"Received on 12th March, 2023",2023-03-12,2023-03-12,pass
+label: upper case,RECEIVED: 12 March 2023,2023-03-12,2023-03-12,pass
+label: typo recieved,Recieved: 12 March 2023,2023-03-12,2023-03-12,pass
+label: abbreviation Recvd.,Recvd. 12 Mar 2023,2023-03-12,2023-03-12,pass
+label: article history prefix,Article history: Received: 2 Jan 2026; Revised: 4 Mar 2026; Accepted: 10 Apr 2026,2026-01-02,2026-01-02,pass
+"label: one line, semicolons, no colons",Received 12 Mar 2023; Revised 5 May 2023; Accepted 1 Jun 2023,2023-03-12,2023-03-12,pass
+label: pipe separated,Received 2 Jan 2026 | Accepted 10 Apr 2026 | Published online: 15 May 2026,2026-01-02,2026-01-02,pass
+layout: label and date in separate runs,Title ; split ; Revised: 4 Mar 2026,2026-01-02,2026-01-02,pass
+layout: label and value in separate table cells,Title ; table,2026-01-02,2026-01-02,pass
+layout: label and date on separate lines,Title ; Received ; 2 January 2026,2026-01-02,2026-01-02,pass
+layout: date only in header,Title ; Body text | header: Received 2 Jan 2026 | Accepted 10 Apr 2026,2026-01-02,2026-01-02,pass
+layout: date only in footer,Title ; Body text | footer: Received: 2 Jan 2026,2026-01-02,2026-01-02,pass
+layout: after references,Title ; References ; [1] A. Author. 2018. ; Received: 2 January 2026; Revised: 4 March 2026,2026-01-02,2026-01-02,pass
+layout: one date per paragraph,Title ; Accepted: 10 April 2026 ; Received: 2 January 2026 ; Revised: 4 March 2026,2026-01-02,2026-01-02,pass
+real file: merged_01.docx,merged_01.docx,2026-01-02,2026-01-02,pass
+real file: merged_02.docx,merged_02.docx,2026-01-02,2026-01-02,pass
+real file: merged_03.docx,merged_03.docx,2026-01-02,2026-01-02,pass
+real file: merged_04.docx,merged_04.docx,2026-01-02,2026-01-02,pass
+real file: merged_05.docx,merged_05.docx,2026-04-03,2026-04-03,pass
+real file: merged_06.docx,merged_06.docx,2026-03-04,2026-03-04,pass
+real file: merged_07.docx,merged_07.docx,2026-04-03,2026-04-03,pass
+real file: merged_08.docx,merged_08.docx,Invalid,Invalid,pass
+real file: merged_09.docx,merged_09.docx,Invalid,Invalid,pass
+real file: merged_10.docx,merged_10.docx,2026-01-02,2026-01-02,pass
+real file: merged_11.docx,merged_11.docx,2026-01-02,2026-01-02,pass
+real file: merged_12.docx,merged_12.docx,Invalid,Invalid,pass
+real file: merged_13.docx,merged_13.docx,2026-01-02,2026-01-02,pass
+real file: merged_14.docx,merged_14.docx,2026-01-02,2026-01-02,pass
+real file: merged_15.docx,merged_15.docx,2026-01-02,2026-01-02,pass
+real file: merged_16.docx,merged_16.docx,2026-01-02,2026-01-02,pass
+real file: merged_17.docx,merged_17.docx,2026-01-02,2026-01-02,pass
+real file: merged_18.docx,merged_18.docx,2026-05-12,2026-05-12,pass
+real file: merged_19.docx,merged_19.docx,Invalid,Invalid,pass
+real file: merged_20.docx,merged_20.docx,2026-01-02,2026-01-02,pass
+trap: real label amid prose decoys,We received 120 samples on 5 May 2025. ; An earlier version was accepted for oral presentation on 14 June 2025 and submitted on 12 November 2025. ; Protocol revised 1 February 2025 was used. ; Accessed: 12 January 2026 ; Received: 2 Jan 2026; Revised: 4 Mar 2026; Accepted: 10 Apr 2026,2026-01-02,2026-01-02,pass
+trap: Received in revised form only,Received in revised form: 4 March 2026,Invalid,Invalid,pass
+trap: original beside revised form,Received 2 January 2026; Received in revised form 4 March 2026; Accepted 10 April 2026; Available online 15 May 2026,2026-01-02,2026-01-02,pass
+trap: prose 'received' with a date later,We received 120 samples on 5 May 2025.,Invalid,Invalid,pass
+trap: prose 'received support',The team received additional support on 2 May 2025 from the council.,Invalid,Invalid,pass
+trap: only Accepted,Accepted: 10 April 2026,Invalid,Invalid,pass
+trap: only Date accepted,Date accepted: 2026-04-10,Invalid,Invalid,pass
+trap: Published and Issue date only,Published online: 15 May 2026; Issue date: 1 July 2026,Invalid,Invalid,pass
+trap: Accessed date only,[9] Guidance note. Accessed: 12 January 2026.,Invalid,Invalid,pass
+trap: Submitted is not Received,Submitted: 12 November 2025,Invalid,Invalid,pass
+assumption: first Received wins,Received: 2 Jan 2026 ; Received: 5 Mar 2026,2026-01-02,2026-01-02,pass
